@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
         "outDir": "./src/",
-        "noImplicitAny": true,
+        "noImplicitAny": false,
+        "strict": false,
         "module": "es6",
         "target": "es5",
         "jsx": "react-jsx",

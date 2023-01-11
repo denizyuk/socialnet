@@ -1,4 +1,4 @@
-/* import { Component } from "react";
+import { Component } from "react";
 import { Link } from "react-router-dom";
 
 const defaultState = {
@@ -55,7 +55,6 @@ export default class ForgetPassword extends Component {
             })
                 .then((res) => res.json())
                 .then((data) => {
-
                     if (data.success === true) {
                         this.setState({ step: 2 });
                         alert("Your Code is: " + data.passCode);
@@ -183,4 +182,3 @@ export default class ForgetPassword extends Component {
         return <div> {this.forgetPasswordSteps()} </div>;
     }
 }
-*/

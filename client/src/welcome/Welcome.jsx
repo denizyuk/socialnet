@@ -1,11 +1,12 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Register from "./Registration.jsx";
 import Login from "./Login";
-{
-    /*import ForgetPassword from "./ForgetPassword";
-     */
-}
+//import { BrowserRouter } from "react-router-dom";
+
+import ForgetPassword from "./ForgetPassword";
+
 // styling later
+import "../../../client/style.css";
 
 export default function Welcome() {
     return (
@@ -18,12 +19,11 @@ export default function Welcome() {
                     <Routes>
                         <Route path="/" element={<Register />}></Route>
                         <Route path="/login" element={<Login />}></Route>
-                        {/*
-                            <Route
-                                path="/forgetPasword"
-                                element={<ForgetPassword />}
-                            ></Route>
-    */}
+
+                        <Route
+                            path="/forgetPasword"
+                            element={<ForgetPassword />}
+                        ></Route>
                     </Routes>
                 </BrowserRouter>
             </div>

@@ -114,7 +114,7 @@ export default class Login extends Component {
                     <Link to="/forgetPassword">forget password?</Link>
                 </div>
                 <div>
-                    <Link to="/forgetPassword">
+                    <Link to="/">
                         <button className="new-account-btn">
                             Create New Accout
                         </button>

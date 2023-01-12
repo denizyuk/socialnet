@@ -10,9 +10,8 @@
 }
 
 .sml-profile-pic {
-    border-radius: 50%;
     object-fit: cover;
-    border: 2px solid;
+
     height: 40px;
     width: 40px;
     margin-left: 60px;
@@ -21,4 +20,21 @@
 .welcome-sml-cont h1 {
     font-size: 90px;
     margin-top: -25px;
+}
+
+.small-pic {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    margin-right: 50px;
+}
+
+h2 {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.fakeBook {
+    color: orange;
 }

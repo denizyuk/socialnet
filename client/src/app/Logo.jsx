@@ -1,7 +1,7 @@
 export default function Logo() {
     return (
         <>
-            <h2>fakeBook</h2>
+            <h2 className="fakeBook">fakeBook</h2>
         </>
     );
 }

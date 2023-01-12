@@ -3,16 +3,19 @@ export default function ProfilePic({
     togglePopup,
     profilePicClass,
 }) {
-    profilePic = profilePic || "client/public/emptyProfliePic.png";
+    profilePic = profilePic || "/emptyProfliePic.png";
+    console.log("profilel pic hello", profilePic);
 
     return (
-        <>
-            <img
-                className={profilePicClass}
-                src={profilePic}
-                alt="..."
-                onClick={togglePopup}
-            />
-        </>
+        <div className="profilePic">
+            <>
+                <img
+                    className={profilePicClass}
+                    src={profilePic}
+                    alt="..."
+                    onClick={togglePopup}
+                />
+            </>
+        </div>
     );
 }

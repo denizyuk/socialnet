@@ -1,8 +1,4 @@
-import { useHistory } from "react-router-dom";
-
 export default function Logout() {
-    let history = useHistory();
-
     function handleLogut() {
         fetch("/logout")
             .then((res) => res.json())

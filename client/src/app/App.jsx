@@ -1,5 +1,4 @@
 import { Component } from "react";
-import { BrowserRouter, Route, Link } from "react-router-dom";
 
 import "../../../client/style.css";
 
@@ -10,7 +9,7 @@ import Profile from "./Profile.jsx";
 export class App extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = { isPopupOpen: false };
     }
 
     render() {
@@ -27,10 +26,18 @@ export class App extends Component {
                             profilePicClass={"sml-profile-pic"}
                         />
                     </div>
+
+                    <Profile
+                        firstName={this.state.firstName}
+                        lastName={this.state.lastName}
+                        fullName={this.state.fullName}
+                        profilePic={this.state.profilePic}
+                        bio={this.state.bio}
+                        updateBio={this.updateBio}
+                        togglePopup={this.togglePopup}
+                    />
                 </div>
             </div>
         );
     }
 }
-// add a logo component
-//

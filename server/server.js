@@ -92,6 +92,11 @@ app.post("/Login", (req, res) => {
     });
 });
 
+app.get("/logout", (req, res) => {
+    req.session = null;
+    res.json({ success: true });
+});
+
 app.listen(PORT, function () {
     console.log(`Express server listening on port ${PORT}`);
 });

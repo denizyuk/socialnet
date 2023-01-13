@@ -6,6 +6,8 @@ import Logo from "./Logo.jsx";
 import ProfilePic from "./ProfilePic.jsx";
 import Profile from "./Profile.jsx";
 import Uploader from "./Uploader.jsx";
+import FindPeople from "./FindPeople.jsx";
+import Logout from "./Logout.jsx";
 
 export class App extends Component {
     constructor(props) {
@@ -101,6 +103,7 @@ export class App extends Component {
                         updateBio={this.updateBio}
                         togglePopup={this.togglePopup}
                     />
+                    <FindPeople />
                 </div>
             </div>
         );

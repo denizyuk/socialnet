@@ -78,10 +78,6 @@ app.get("/user/id.json", function (req, res) {
     res.json({});
 });
 
-app.get("*", function (req, res) {
-    res.sendFile(path.join(__dirname, "..", "client", "index.html"));
-});
-
 app.post("/Login", (req, res) => {
     const { email, password } = req.body;
 
@@ -170,7 +166,7 @@ app.post("/bio", checkId, (req, res) => {
 app.get("/user", checkId, (req, res) => {
     console.log("test outside of the if statement in /user");
     if (req.session.userId) {
-        const { userId } = req.session.userId;
+        const { userId } = req.session;
         console.log("userID", userId);
         db.findUserById(userId)
             .then((data) => {
@@ -180,6 +176,10 @@ app.get("/user", checkId, (req, res) => {
                 console.log("error in findUserById ", err);
             });
     }
+});
+
+app.get("*", function (req, res) {
+    res.sendFile(path.join(__dirname, "..", "client", "index.html"));
 });
 
 app.listen(PORT, function () {

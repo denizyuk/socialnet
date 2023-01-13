@@ -3,7 +3,7 @@ const { SQL_USER, SQL_PASSWORD } = process.env; // add a .env file next to the d
 const spicedPg = require("spiced-pg");
 const db = spicedPg(
     process.env.DATABASE_URL ||
-        `postgres:${SQL_USER}:${SQL_PASSWORD}@localhost:5432/deyuk`
+        `postgres:${SQL_USER}:${SQL_PASSWORD}@localhost:5432/social-network`
 );
 
 const bcrypt = require("bcryptjs");
@@ -52,4 +52,29 @@ module.exports.checkEmail = function (email) {
 module.exports.findUserByEmail = function (email) {
     const sql = `SELECT id, email, password FROM users WHERE email = $1;`;
     return db.query(sql, [email]);
+};
+
+module.exports.insertProfilePic = function (profile_pic, userId) {
+    const sql = `
+        UPDATE users SET profile_pic = $1
+        WHERE id = $2
+        RETURNING *;
+    `;
+    return db.query(sql, [profile_pic, userId]);
+};
+
+module.exports.insertBio = function (bio, userId) {
+    const sql = `
+    UPDATE users SET bio = $1
+    WHERE id = $2
+    RETURNING *;
+    `;
+    return db.query(sql, [bio, userId]);
+};
+
+module.exports.findUserById = function (userId) {
+    const sql = `
+    SELECT * FROM users WHERE id = $1;
+    `;
+    return db.query(sql, [userId]);
 };

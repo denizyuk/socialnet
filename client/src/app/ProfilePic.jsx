@@ -4,7 +4,7 @@ export default function ProfilePic({
     profilePicClass,
 }) {
     profilePic = profilePic || "/emptyProfliePic.png";
-    console.log("profilel pic hello", profilePic);
+    console.log("profile pic hello", profilePic);
 
     return (
         <div className="profilePic">

@@ -7,5 +7,6 @@ CREATE TABLE users (
     email VARCHAR NOT NULL UNIQUE,
     password VARCHAR NOT NULL
     profile_pic TEXT,
+    bio TEXT
 );
 

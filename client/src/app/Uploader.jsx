@@ -4,7 +4,7 @@ export default function Uploader({ setProfilePic }) {
         const form = e.currentTarget;
 
         const formData = new FormData(form);
-        fetch("/profile_pic", {
+        fetch("/profilePic", {
             method: "POST",
             body: formData,
         })

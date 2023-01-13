@@ -3,9 +3,17 @@ const app = express();
 const compression = require("compression");
 const path = require("path");
 const db = require("./db.js");
+const aws = require("aws-sdk");
+const { AWS_KEY, AWS_SECRET, AWS_BUCKET } = process.env;
+const s3 = new aws.S3({
+    accessKeyId: AWS_KEY,
+    secretAccessKey: AWS_SECRET,
+});
 require("dotenv").config();
+const fs = require("fs");
 
 const cookieSession = require("cookie-session");
+const { uploader, checkId } = require("./middleware.js");
 
 const urlEncodedMiddleware = express.urlencoded({ extended: false });
 app.use(urlEncodedMiddleware);
@@ -26,6 +34,12 @@ app.use(
 );
 
 //   DOUBLE CHECK NAMES !!!!!!
+
+app.get("/user/id", checkId, function (req, res) {
+    res.json({
+        userId: req.session.userId,
+    });
+});
 
 app.post("/registration", (req, res) => {
     console.log("req.body: ", req.body);
@@ -51,6 +65,8 @@ app.post("/registration", (req, res) => {
         });
     }
 });
+
+// BUNU SAKIN SILME!!!
 
 app.get("/user/id.json", function (req, res) {
     if (req.session) {
@@ -95,6 +111,75 @@ app.post("/Login", (req, res) => {
 app.get("/logout", (req, res) => {
     req.session = null;
     res.json({ success: true });
+});
+
+app.post("/profilePic", checkId, uploader.single("file"), (req, res) => {
+    if (req.file) {
+        const { filename, mimetype, size, path } = req.file;
+        const promise = s3
+            .putObject({
+                Bucket: "spicedling",
+                ACL: "public-read",
+                Key: filename,
+                Body: fs.createReadStream(path),
+                ContentType: mimetype,
+                ContentLength: size,
+            })
+            .promise();
+
+        promise
+            .then(() => {
+                console.log("success uploading");
+                fs.unlinkSync(req.file.path);
+                let profilePic = `https://s3.amazonaws.com/${AWS_BUCKET}/${filename}`;
+
+                db.insertProfilePic(profilePic, req.session.userId).then(() => {
+                    res.json({
+                        success: true,
+                        message: "Thank you upload complete!",
+                        profilePic,
+                    });
+                });
+            })
+            .catch((err) => {
+                console.log("ERROR in insertProfilePic: ", err);
+            });
+    } else {
+        res.json({
+            success: false,
+            message: "Upload failed!",
+        });
+    }
+});
+
+app.post("/bio", checkId, (req, res) => {
+    const { newBio } = req.body;
+
+    db.insertBio(newBio, req.session.userId)
+        .then(() => {
+            res.json({
+                success: true,
+                bio: newBio,
+            });
+        })
+        .catch((err) => {
+            console.log("error in insertbio: ", err);
+        });
+});
+
+app.get("/user", checkId, (req, res) => {
+    console.log("test outside of the if statement in /user");
+    if (req.session.userId) {
+        const { userId } = req.session.userId;
+        console.log("userID", userId);
+        db.findUserById(userId)
+            .then((data) => {
+                res.json(data.rows[0]);
+            })
+            .catch((err) => {
+                console.log("error in findUserById ", err);
+            });
+    }
 });
 
 app.listen(PORT, function () {

@@ -34,6 +34,15 @@ app.use(
 );
 
 //   DOUBLE CHECK NAMES !!!!!!
+app.use((req, res, next) => {
+    console.log("---------------------");
+    console.log("req.url:", req.url);
+    console.log("req.method:", req.method);
+    console.log("req.session:", req.session);
+    console.log("req.body:", req.body);
+    console.log("---------------------");
+    next();
+});
 
 app.get("/user/id", checkId, function (req, res) {
     res.json({
@@ -189,7 +198,8 @@ app.get("/findUsers/:search", checkId, (req, res) => {
         });
 });
 
-app.get("/user/:id", checkId, (req, res) => {
+app.get("/users/:id", checkId, (req, res) => {
+    console.log(req.params, "req.params");
     if (req.params.id == req.session.userId) {
         res.json({
             success: false,

@@ -9,6 +9,7 @@ import Profile from "./Profile.jsx";
 import Uploader from "./Uploader.jsx";
 import FindPeople from "./FindPeople.jsx";
 import OtherProfile from "./OtherProfile.jsx";
+import FriendButton from "./FriendButton.jsx";
 
 export class App extends Component {
     constructor(props) {
@@ -107,7 +108,11 @@ export class App extends Component {
                     <BrowserRouter>
                         <Routes>
                             <Route path="/" element={<FindPeople />}></Route>
-                            <Route path="/" element={<OtherProfile />}></Route>
+                            <Route
+                                path="/users/:id"
+                                element={<OtherProfile />}
+                            ></Route>
+                            <Route path="/" element={<FriendButton />}></Route>
                         </Routes>
                     </BrowserRouter>
                 </div>

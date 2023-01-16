@@ -9,10 +9,10 @@ export default function OtherProfile() {
     const [full_name, setFullName] = useState("");
     const [profile_pic, setProfilePic] = useState("");
     const [bio, setBio] = useState("");
-
+    console.log("IN OTHER PROFILE");
     useEffect(() => {
         console.log("userID is ", userId.id);
-        fetch(`/user/${userId.id}`, {
+        fetch(`/users/${userId.id}`, {
             method: "get",
         })
             .then((response) => response.json())

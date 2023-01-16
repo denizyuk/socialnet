@@ -78,3 +78,12 @@ module.exports.findUserById = function (userId) {
     `;
     return db.query(sql, [userId]);
 };
+
+module.exports.findUsersByValue = function (name) {
+    const sql = `
+        SELECT id, first_name, last_name, profile_pic FROM users
+        WHERE first_name ILIKE $1 OR last_name ILIKE $1
+        
+    `;
+    return db.query(sql, [name + "%"]);
+};

@@ -1,4 +1,5 @@
 import { Component } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import "../../../client/style.css";
 
@@ -7,7 +8,7 @@ import ProfilePic from "./ProfilePic.jsx";
 import Profile from "./Profile.jsx";
 import Uploader from "./Uploader.jsx";
 import FindPeople from "./FindPeople.jsx";
-import Logout from "./Logout.jsx";
+import OtherProfile from "./OtherProfile.jsx";
 
 export class App extends Component {
     constructor(props) {
@@ -103,7 +104,12 @@ export class App extends Component {
                         updateBio={this.updateBio}
                         togglePopup={this.togglePopup}
                     />
-                    <FindPeople />
+                    <BrowserRouter>
+                        <Routes>
+                            <Route path="/" element={<FindPeople />}></Route>
+                            <Route path="/" element={<OtherProfile />}></Route>
+                        </Routes>
+                    </BrowserRouter>
                 </div>
             </div>
         );

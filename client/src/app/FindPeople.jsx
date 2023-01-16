@@ -7,21 +7,22 @@ export default function FindPeople() {
 
     useEffect(() => {
         let abort;
-        (async () => {
-            const data = await fetch(`/findUsers/?q=${searchUsers}`, {
-                method: "get",
-            }).then((res) => res.json());
-            if (!abort) {
-                setUsers(data);
-            }
-        })();
+        fetch(`/findUsers/${searchUsers}`)
+            .then((res) => res.json())
+            .then((data) => {
+                if (!abort) {
+                    setUsers(data);
+                }
+            });
+
         return () => {
             abort = true;
         };
     }, [searchUsers]);
 
     const updateSearchUsers = (value) => {
-        return setSearchUsers(value);
+        console.log(value);
+        setSearchUsers(value);
     };
 
     const FindPeopleResult = ({ users }) => {
@@ -38,15 +39,16 @@ export default function FindPeople() {
                                     }
                                     alt=""
                                 />
+                                {user.first_name}&nbsp;{user.last_name}
                             </Link>
-                            <p>{user.full_name}</p>
+                            <p>{user.fullName}</p>
                         </li>
                     </ul>
                 ))}
             </>
         );
     };
-
+    console.log(searchUsers);
     return (
         <div className="find-people-big-cont">
             <h3>Find people now </h3>

@@ -178,6 +178,36 @@ app.get("/user", checkId, (req, res) => {
     }
 });
 
+app.get("/findUsers/:search", checkId, (req, res) => {
+    console.log("req", req.params.search);
+    db.findUsersByValue(req.params.search)
+        .then((data) => {
+            res.json(data.rows);
+        })
+        .catch((err) => {
+            console.log("ERROR in findUsers: ", err);
+        });
+});
+
+app.get("/user/:id", checkId, (req, res) => {
+    if (req.params.id == req.session.userId) {
+        res.json({
+            success: false,
+        });
+    } else {
+        db.findUserById(req.params.id)
+            .then((data) => {
+                res.json({
+                    success: true,
+                    data: data.rows[0],
+                });
+            })
+            .catch((err) => {
+                console.log("ERROR : ", err);
+            });
+    }
+});
+
 app.get("*", function (req, res) {
     res.sendFile(path.join(__dirname, "..", "client", "index.html"));
 });

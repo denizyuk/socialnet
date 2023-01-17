@@ -199,7 +199,7 @@ app.get("/findUsers/:search", checkId, (req, res) => {
 });
 
 app.get("/users/:id", checkId, (req, res) => {
-    console.log(req.params, "req.params");
+    // console.log(req.params, "req.params");
     if (req.params.id == req.session.userId) {
         res.json({
             success: false,

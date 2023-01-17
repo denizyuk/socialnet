@@ -65,7 +65,7 @@ export default function FriendButton({ friendsId }) {
 
     return (
         <div>
-            <button onClick={onRequestClick}>{btnState}</button>
+            <button onClick={onRequestClick}>{btnState}Add Friend</button>
         </div>
     );
 }

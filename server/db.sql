@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS passwordCodes;
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -8,5 +9,19 @@ CREATE TABLE users (
     password VARCHAR NOT NULL
     profile_pic TEXT,
     bio TEXT
+);
+
+CREATE TABLE friendships (
+    id SERIAL PRIMARY KEY,
+    sender_id INTEGER NOT NULL REFERENCES users(id),
+    recipient_id INTEGER NOT NULL REFERENCES users(id),
+    accepted BOOLEAN DEFAULT false,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE passwordCodes (
+    email VARCHAR(255) NOT NULL REFERENCES users(email),
+    passwordCode VARCHAR(255) NOT NULL CHECK(passwordCode != ''),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

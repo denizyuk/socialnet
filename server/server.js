@@ -199,7 +199,6 @@ app.get("/findUsers/:search", checkId, (req, res) => {
 });
 
 app.get("/users/:id", checkId, (req, res) => {
-    // console.log(req.params, "req.params");
     if (req.params.id == req.session.userId) {
         res.json({
             success: false,
@@ -216,6 +215,62 @@ app.get("/users/:id", checkId, (req, res) => {
                 console.log("ERROR : ", err);
             });
     }
+});
+
+app.get("/friendship/:otherUserId", checkId, (req, res) => {
+    db.findFriendship(req.session.userId, req.params.otherUserId)
+        .then((data) => {
+            res.json({ data: data.rows, userId: req.session.userId });
+        })
+        .catch((err) => {
+            console.log("ERROR in friendship GET: ", err);
+        });
+});
+
+app.post("/friendship/:otherUserId", checkId, (req, res) => {
+    db.insertFriendship(req.session.userId, req.params.otherUserId)
+        .then((data) => {
+            res.json(data.rows);
+        })
+        .catch((err) => {
+            console.log("ERROR in friendship POST: ", err);
+        });
+});
+
+app.post("/friendship/cancel/:otherUserId", checkId, (req, res) => {
+    db.deleteFriendship(req.session.userId, req.params.otherUserId)
+        .then((data) => {
+            res.json(data.rows);
+        })
+        .catch((err) => {
+            console.log("ERROR in friendship cancel POST: ", err);
+        });
+});
+
+app.post("/friendship/accept/:otherUserId", checkId, (req, res) => {
+    db.acceptFriendship(req.session.userId, req.params.otherUserId)
+        .then((data) => {
+            res.json(data.rows);
+        })
+        .catch((err) => {
+            console.log("ERROR in friendship accept POST: ", err);
+        });
+});
+
+app.get("/friendship", checkId, (req, res) => {
+    db.retrievingFriends(req.session.userId).then((data) => {
+        db.getHowManyFriends(req.session.userId)
+            .then((friendsCount) => {
+                res.json({
+                    success: true,
+                    friends: data.rows,
+                    count: friendsCount.rows[0],
+                });
+            })
+            .catch((err) => {
+                console.log("ERROR in friendship GET: ", err);
+            });
+    });
 });
 
 app.get("*", function (req, res) {

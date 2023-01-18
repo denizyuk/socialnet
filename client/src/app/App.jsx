@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
 
 import "../../../client/style.css";
 
@@ -9,7 +9,9 @@ import Profile from "./Profile.jsx";
 import Uploader from "./Uploader.jsx";
 import FindPeople from "./FindPeople.jsx";
 import OtherProfile from "./OtherProfile.jsx";
-import FriendButton from "./FriendButton.jsx";
+
+import Friends from "./Friends.jsx";
+import Logout from "./Logout.jsx";
 
 export class App extends Component {
     constructor(props) {
@@ -73,46 +75,70 @@ export class App extends Component {
         return (
             <div>
                 <div className="app-header">
-                    <div className="logo">
-                        <Logo />
-                    </div>
-                    <div className="small-pic">
-                        <ProfilePic
-                            profilePic={this.state.profilePic}
-                            togglePopup={this.togglePopup}
-                            profilePicClass={"sml-profile-pic"}
-                        />
-                    </div>
-                    <div>
-                        <p>{this.state.firstName}</p>
-                    </div>
-                    <div>
-                        {this.state.isPopupOpen && (
-                            <Uploader
-                                setProfilePic={(newProfilePic) => {
-                                    this.setProfilePic(newProfilePic);
-                                }}
-                            />
-                        )}
-                    </div>
-
-                    <Profile
-                        firstName={this.state.firstName}
-                        lastName={this.state.lastName}
-                        fullName={this.state.fullName}
-                        profilePic={this.state.profilePic}
-                        bio={this.state.bio}
-                        updateBio={this.updateBio}
-                        togglePopup={this.togglePopup}
-                    />
                     <BrowserRouter>
+                        <div className="logo">
+                            <Logo />
+                        </div>
+                        <div className="small-pic">
+                            <ProfilePic
+                                profilePic={this.state.profilePic}
+                                togglePopup={this.togglePopup}
+                                profilePicClass={"sml-profile-pic"}
+                            />
+                        </div>
+                        <div>
+                            <p>{this.state.firstName}</p>
+                        </div>
+                        <div>
+                            <div className="app-navbar">
+                                <div className="navbar">
+                                    <Link to="/profile">Profile</Link>
+                                </div>
+                                <div className="navbar">
+                                    <Link to="/friends">Friends</Link>
+                                </div>
+
+                                <div className="navbar">
+                                    <Link to="/people">Find People</Link>
+                                </div>
+                                <div className="navbar">
+                                    <Logout />
+                                </div>
+                            </div>
+
+                            {this.state.isPopupOpen && (
+                                <Uploader
+                                    setProfilePic={(newProfilePic) => {
+                                        this.setProfilePic(newProfilePic);
+                                    }}
+                                />
+                            )}
+                        </div>
+
+                        <Profile
+                            firstName={this.state.firstName}
+                            lastName={this.state.lastName}
+                            fullName={this.state.fullName}
+                            profilePic={this.state.profilePic}
+                            bio={this.state.bio}
+                            updateBio={this.updateBio}
+                            togglePopup={this.togglePopup}
+                        />
+
                         <Routes>
-                            <Route path="/" element={<FindPeople />}></Route>
+                            <Route
+                                path="/people"
+                                element={<FindPeople />}
+                            ></Route>
                             <Route
                                 path="/users/:id"
                                 element={<OtherProfile />}
                             ></Route>
-                            <Route path="/" element={<FriendButton />}></Route>
+
+                            <Route
+                                path="/friends"
+                                element={<Friends />}
+                            ></Route>
                         </Routes>
                     </BrowserRouter>
                 </div>

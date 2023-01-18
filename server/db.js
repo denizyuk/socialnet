@@ -87,3 +87,70 @@ module.exports.findUsersByValue = function (name) {
     `;
     return db.query(sql, [name + "%"]);
 };
+
+module.exports.findFriendship = (user1, user2) => {
+    const sql = `
+        SELECT * FROM friendships
+        WHERE (sender_id = $1 AND recipient_id = $2)
+        OR (sender_id = $2 AND recipient_id = $1)`;
+    return db.query(sql, [user1, user2]);
+};
+
+module.exports.insertFriendship = (userId1, userId2) => {
+    const sql = `
+        INSERT INTO friendships (sender_id, recipient_id)
+        VALUES ($1, $2)
+        RETURNING *;
+        `;
+    return db.query(sql, [userId1, userId2]);
+};
+
+module.exports.deleteFriendship = (userId1, userId2) => {
+    const sql = `
+        DELETE FROM friendships 
+        WHERE (sender_id = $1 AND recipient_id = $2)
+        OR (sender_id = $2 AND recipient_id = $1)
+        `;
+    return db.query(sql, [userId1, userId2]);
+};
+
+module.exports.acceptFriendship = (userId1, userId2) => {
+    const sql = `
+        UPDATE friendships SET accepted = true
+        WHERE (sender_id = $1 AND recipient_id = $2)
+        OR (sender_id = $2 AND recipient_id = $1)
+        `;
+    return db.query(sql, [userId1, userId2]);
+};
+
+module.exports.retrievingFriends = (userId) => {
+    const sql = `
+    
+        SELECT users.id, first_name, last_name, CONCAT (first_name, ' ', last_name) AS full_name, accepted, profile_pic FROM users
+        JOIN friendships
+        ON (accepted = true AND recipient_id = $1 AND users.id = friendships.sender_id)
+        OR (accepted = true AND sender_id = $1 AND users.id = friendships.recipient_id)
+        OR (accepted = false AND recipient_id = $1 AND users.id = friendships.sender_id)
+        ORDER BY first_name ASC;
+ `;
+    return db.query(sql, [userId]);
+};
+
+module.exports.insertNewPassword = function (email, password) {
+    const sql = `
+        UPDATE users SET password = $2
+        WHERE email = $1;
+    `;
+    return this.hash(password).then((hpassword) => {
+        return db.query(sql, [email, hpassword]);
+    });
+};
+
+module.exports.getHowManyFriends = (userId) => {
+    const sql = `
+        SELECT count(CASE WHEN accepted THEN 1 END) 
+        FROM friendships
+        WHERE sender_id = $1 or recipient_id = $1;
+        `;
+    return db.query(sql, [userId]);
+};

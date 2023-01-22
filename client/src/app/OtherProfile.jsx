@@ -32,7 +32,7 @@ export default function OtherProfile() {
             <div className="profile-big-cont">
                 <div>
                     <img
-                        src={profile_pic || "../emptyProfilePic.png"}
+                        src={profile_pic || "/emptyProfliePic.png"}
                         className="big-profile-pic"
                     />
                 </div>

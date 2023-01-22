@@ -1,5 +1,7 @@
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS passwordCodes;
+DROP TABLE IF EXISTS friendships;
+DROP TABLE IF EXISTS messages;
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -25,3 +27,11 @@ CREATE TABLE passwordCodes (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
+--Add to the database-- 
+CREATE TABLE messages (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) NOT NULL,
+    message TEXT NOT NULL CHECK (message != ''),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

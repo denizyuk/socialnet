@@ -11,6 +11,7 @@ const s3 = new aws.S3({
 });
 require("dotenv").config();
 const fs = require("fs");
+const server = require("http").Server(app);
 
 const cookieSession = require("cookie-session");
 const { uploader, checkId } = require("./middleware.js");
@@ -23,6 +24,31 @@ app.use(compression());
 
 app.use(express.static(path.join(__dirname, "..", "client", "public")));
 app.use(express.json());
+
+const io = require("socket.io")(server, {
+    allowRequest: (req, callback) =>
+        callback(null, req.headers.referer.startsWith("http://localhost:3000")),
+});
+
+io.on("connection", async (socket) => {
+    console.log("[social:socket] incoming socket connection", socket.id);
+
+    const { userId } = socket.request.session;
+    if (!userId) {
+        return socket.disconnect(true);
+    }
+
+    const latestMessages = await db.getLastMessages();
+
+    socket.emit("chatMessages", latestMessages.rows);
+
+    socket.on("chatMessage", async (text) => {
+        const newMessage = await db.insertMessage(userId, text);
+        console.log("messages in server", newMessage);
+
+        io.emit("chatMessage", newMessage);
+    });
+});
 
 // ---------- COOKIES ----------
 
@@ -117,6 +143,52 @@ app.get("/logout", (req, res) => {
     req.session = null;
     res.json({ success: true });
 });
+
+//app.post("/forgetPassword", (req, res) => {
+//    const email = req.body.email;
+//
+//    db.checkEmail(email).then((result) => {
+//        // console.log("email log", result[0]);
+//        if (!result.length) {
+//            res.json({ message: "email not found" });
+//        } else {
+//            const secretCode = cryptoRandomString({
+//                length: 6,
+//            });
+//            console.log("password code is: ", secretCode);
+//
+//            db.insertPasswordCode(email, secretCode).then(() => {
+//                if (req.body) {
+//                    res.json({
+//                        success: true,
+//                        passCode: secretCode,
+//                    });
+//                } else {
+//                    res.json({
+//                        success: false,
+//                        message: "something went wrong!",
+//                    });
+//                }
+//            });
+//        }
+//    });
+//});
+
+// app.post("/resetPassword", (req, res) => {
+//     const { email, passwordCode, newPassword } = req.body;
+
+//     db.findPasswordCode(email).then((data) => {
+//         if (data.rows[0].passwordcode === passwordCode) {
+//             db.insertNewPassword(email, newPassword).then(() => {
+//                 res.json({
+//                     success: true,
+//                 });
+//             });
+//         } else {
+//             res.json({ success: false, message: "wrong code!" });
+//         }
+//     });
+// });
 
 app.post("/profilePic", checkId, uploader.single("file"), (req, res) => {
     if (req.file) {
@@ -217,6 +289,35 @@ app.get("/users/:id", checkId, (req, res) => {
     }
 });
 
+app.get("/friends", (req, res) => {
+    const userId = req.session.userId;
+
+    db.retrievingFriends(userId)
+        .then((friends) => {
+            db.getHowManyFriends(userId)
+                .then((count) => {
+                    res.json({
+                        friends: friends.rows,
+                        count: count.rows[0],
+                    });
+                })
+                .catch((err) => {
+                    console.log("Error getting friends count: ", err);
+                    res.json({
+                        success: false,
+                        error: err,
+                    });
+                });
+        })
+        .catch((err) => {
+            console.log("Error retrieving friends: ", err);
+            res.json({
+                success: false,
+                error: err,
+            });
+        });
+});
+
 app.get("/friendship/:otherUserId", checkId, (req, res) => {
     db.findFriendship(req.session.userId, req.params.otherUserId)
         .then((data) => {
@@ -271,6 +372,28 @@ app.get("/friendship", checkId, (req, res) => {
                 console.log("ERROR in friendship GET: ", err);
             });
     });
+});
+
+app.get("/messages", (req, res) => {
+    const limit = req.query.limit || 10;
+    db.getLastMessages(limit)
+        .then((data) => res.json(data.rows))
+        .catch((error) => res.json(error));
+});
+
+app.get("/messages/:id", (req, res) => {
+    const messageId = req.params.id;
+    db.getLastMessageById(messageId)
+        .then((data) => res.json(data.rows[0]))
+        .catch((error) => res.json(error));
+});
+
+app.post("/messages", (req, res) => {
+    const userId = req.body.userId;
+    const message = req.body.message;
+    db.insertMessage(userId, message)
+        .then((data) => res.json(data))
+        .catch((error) => res.json(error));
 });
 
 app.get("*", function (req, res) {

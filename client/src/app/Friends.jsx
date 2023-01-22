@@ -14,6 +14,7 @@ export default function Friends() {
         })
             .then((res) => res.json())
             .then((data) => {
+                console.log("friends data : ", data);
                 setFriends(data.friends);
                 setCount(data.count.count);
             });
@@ -36,7 +37,7 @@ export default function Friends() {
                                                 <img
                                                     src={
                                                         profile_pic ||
-                                                        "../emptyProfilePic.png"
+                                                        "emptyProfilePic.png"
                                                     }
                                                     alt=""
                                                 />
@@ -74,7 +75,7 @@ export default function Friends() {
                                                 <img
                                                     src={
                                                         profile_pic ||
-                                                        "../emptyProfilePic.png"
+                                                        "/emptyProfliePic.png"
                                                     }
                                                     alt=""
                                                 />

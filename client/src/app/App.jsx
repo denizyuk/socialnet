@@ -9,7 +9,7 @@ import Profile from "./Profile.jsx";
 import Uploader from "./Uploader.jsx";
 import FindPeople from "./FindPeople.jsx";
 import OtherProfile from "./OtherProfile.jsx";
-
+import Chat from "./Chat.jsx";
 import Friends from "./Friends.jsx";
 import Logout from "./Logout.jsx";
 
@@ -102,6 +102,9 @@ export class App extends Component {
                                     <Link to="/people">Find People</Link>
                                 </div>
                                 <div className="navbar">
+                                    <Link to="/chat">Chat</Link>
+                                </div>
+                                <div className="navbar">
                                     <Logout />
                                 </div>
                             </div>
@@ -135,6 +138,7 @@ export class App extends Component {
                                 element={<OtherProfile />}
                             ></Route>
 
+                            <Route path="/chat" element={<Chat />}></Route>
                             <Route
                                 path="/friends"
                                 element={<Friends />}

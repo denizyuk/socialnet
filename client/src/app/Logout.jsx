@@ -3,14 +3,14 @@ export default function Logout() {
         fetch("/logout")
             .then((res) => res.json())
             .then(() => {
-                history.push("/login");
+                history.push("/Login");
                 window.location.reload();
             });
     }
     return (
         <>
             <div className="logout-btn" onClick={handleLogut}>
-                Log Out
+                <button> Log Out </button>
             </div>
         </>
     );

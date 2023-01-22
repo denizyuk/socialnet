@@ -54,6 +54,36 @@ module.exports.findUserByEmail = function (email) {
     return db.query(sql, [email]);
 };
 
+// module.exports.insertPasswordCode = function (email, passwordCode) {
+//     const sql = `
+//         INSERT INTO passwordCodes (email, passwordCode)
+//         VALUES ($1, $2)
+//         RETURNING *;
+//     `;
+//     return db.query(sql, [email, passwordCode]);
+// };
+
+// module.exports.findPasswordCode = function (email) {
+//     const sql = `
+//         SELECT passwordCode FROM passwordCodes
+//         WHERE email = $1
+//         AND CURRENT_TIMESTAMP - created_at < INTERVAL '20 minutes'
+//         ORDER BY created_at DESC
+//         LIMIT 1;
+//     `;
+//     return db.query(sql, [email]);
+// };
+
+// module.exports.insertNewPassword = function (email, password) {
+//     const sql = `
+//         UPDATE users SET password = $2
+//         WHERE email = $1;
+//     `;
+//     return this.hash(password).then((hpassword) => {
+//         return db.query(sql, [email, hpassword]);
+//     });
+// };
+
 module.exports.insertProfilePic = function (profile_pic, userId) {
     const sql = `
         UPDATE users SET profile_pic = $1
@@ -126,7 +156,7 @@ module.exports.acceptFriendship = (userId1, userId2) => {
 module.exports.retrievingFriends = (userId) => {
     const sql = `
     
-        SELECT users.id, first_name, last_name, CONCAT (first_name, ' ', last_name) AS full_name, accepted, profile_pic FROM users
+        SELECT users.id, first_name, last_name, accepted, profile_pic FROM users
         JOIN friendships
         ON (accepted = true AND recipient_id = $1 AND users.id = friendships.sender_id)
         OR (accepted = true AND sender_id = $1 AND users.id = friendships.recipient_id)
@@ -136,16 +166,6 @@ module.exports.retrievingFriends = (userId) => {
     return db.query(sql, [userId]);
 };
 
-module.exports.insertNewPassword = function (email, password) {
-    const sql = `
-        UPDATE users SET password = $2
-        WHERE email = $1;
-    `;
-    return this.hash(password).then((hpassword) => {
-        return db.query(sql, [email, hpassword]);
-    });
-};
-
 module.exports.getHowManyFriends = (userId) => {
     const sql = `
         SELECT count(CASE WHEN accepted THEN 1 END) 
@@ -153,4 +173,41 @@ module.exports.getHowManyFriends = (userId) => {
         WHERE sender_id = $1 or recipient_id = $1;
         `;
     return db.query(sql, [userId]);
+};
+
+module.exports.getLastMessages = (limit = 10) => {
+    const sql = `
+        SELECT messages.id, first_name, last_name, CONCAT (first_name, ' ', last_name) AS full_name, profile_pic, user_id, message,
+        TO_CHAR(messages.created_at, 'DD/MM/YYYY, HH24:MI:SS') AS create_at
+        FROM users
+        JOIN messages
+        ON messages.user_id = users.id
+        ORDER BY messages.created_at DESC
+        LIMIT $1;
+        `;
+    return db.query(sql, [limit]);
+};
+
+function getLastMessageById(messageId) {
+    const sql = `
+        SELECT messages.id, first_name, last_name, CONCAT (first_name, ' ', last_name) AS full_name, profile_pic, user_id, message,
+        TO_CHAR(messages.created_at, 'DD/MM/YYYY, HH24:MI:SS') AS create_at
+        FROM users
+        JOIN messages
+        ON messages.user_id = users.id
+        WHERE messages.id = $1;
+        `;
+    return db.query(sql, [messageId]);
+}
+
+module.exports.insertMessage = (userId, message) => {
+    const sql = `
+        INSERT INTO messages (user_id, message)
+        VALUES ($1, $2)
+        RETURNING *;
+        `;
+    return db.query(sql, [userId, message]).then((result) => {
+        const messageId = result.rows[0].id;
+        return getLastMessageById(messageId).then((data) => data.rows[0]);
+    });
 };

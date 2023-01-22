@@ -35,7 +35,7 @@ export default function FindPeople() {
                                 <img
                                     src={
                                         user.profile_pic ||
-                                        "../emptyProfilePic.png"
+                                        "/emptyProfliePic.png"
                                     }
                                     alt=""
                                 />

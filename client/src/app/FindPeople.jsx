@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
+import "../../../client/style.css";
+
 export default function FindPeople() {
     const [users, setUsers] = useState([]);
     const [searchUsers, setSearchUsers] = useState("");
@@ -28,9 +30,9 @@ export default function FindPeople() {
     const FindPeopleResult = ({ users }) => {
         return (
             <>
-                {users.map((user) => (
-                    <ul key={user.id}>
-                        <li>
+                <ul>
+                    {users.map((user) => (
+                        <li key={user.id}>
                             <Link to={`/users/${user.id}`}>
                                 <img
                                     src={
@@ -43,8 +45,8 @@ export default function FindPeople() {
                             </Link>
                             <p>{user.fullName}</p>
                         </li>
-                    </ul>
-                ))}
+                    ))}
+                </ul>
             </>
         );
     };

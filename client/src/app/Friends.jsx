@@ -37,7 +37,7 @@ export default function Friends() {
                                                 <img
                                                     src={
                                                         profile_pic ||
-                                                        "emptyProfilePic.png"
+                                                        "../emptyProfilePic.png"
                                                     }
                                                     alt=""
                                                 />

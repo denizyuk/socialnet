@@ -1,5 +1,6 @@
 * {
     margin: 0;
+    background-color: orangered;
 }
 .welcome-cont {
     display: flex;
@@ -37,4 +38,192 @@ h2 {
 
 .fakeBook {
     color: orange;
+}
+
+.app-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.navbar {
+    margin-left: 20px;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: black;
+}
+
+.navbar a:hover {
+    color: orange;
+}
+
+/* /style for Profile component/  */
+.profile-big-cont {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.profile-pic {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.profile-pic img {
+    width: 100%;
+    height: 100%;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.profile-info p {
+    margin: 10px;
+    font-weight: bold;
+}
+
+.bio {
+    margin: 20px 0;
+    text-align: center;
+}
+
+/* /style for FindPeople component/ */
+
+.find-people-big-cont {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h3 {
+    margin: 20px 0;
+}
+
+input {
+    width: 50%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+}
+
+.find-people-sml-cont {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: column;
+}
+
+ul {
+    list-style-type: none;
+    margin: 10px;
+}
+
+li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+img {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+/* Chat Component */
+
+.chat-big-cont {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chats-cont {
+    overflow-y: scroll;
+    height: 80vh;
+    width: 80%;
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+ul {
+    list-style-type: none;
+}
+
+li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.chat-user {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.chat-user img {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
+
+.chat-user p {
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.chat-chat {
+    flex-grow: 1;
+    padding: 10px;
+
+    border-radius: 10px;
+}
+
+.new-message {
+    border-top: 1px solid #ccc;
+    padding: 10px;
+    width: 80%;
+}
+
+textarea {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    resize: none;
+}
+
+button {
+    width: 100%;
+    background-color: orange;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }

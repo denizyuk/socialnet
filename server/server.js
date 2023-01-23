@@ -295,17 +295,27 @@ app.get("/findUsers/:search", checkId, (req, res) => {
         });
 });
 
-app.get("/users/:id", checkId, (req, res) => {
+app.get("/findUsers", checkId, (req, res) => {
+    console.log("req", req);
+    db.findUsersByValue(req.params.search)
+        .then((data) => {
+            res.json(data.rows);
+        })
+        .catch((err) => {
+            console.log("ERROR in findUsers: ", err);
+        });
+});
+app.get("/api/users/:id", checkId, (req, res) => {
     if (req.params.id == req.session.userId) {
         res.json({
             success: false,
         });
     } else {
         db.findUserById(req.params.id)
-            .then((data) => {
+            .then((user) => {
                 res.json({
                     success: true,
-                    data: data.rows[0],
+                    data: user,
                 });
             })
             .catch((err) => {

@@ -12,7 +12,7 @@ export default function OtherProfile() {
     console.log("IN OTHER PROFILE");
     useEffect(() => {
         console.log("userID is ", userId.id);
-        fetch(`/users/${userId.id}`, {
+        fetch(`/api/users/${userId.id}`, {
             method: "get",
         })
             .then((response) => response.json())

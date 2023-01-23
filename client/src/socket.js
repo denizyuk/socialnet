@@ -1,4 +1,4 @@
-import { io } from "socket.io-client";
+import io from "socket.io-client";
 import {
     chatMessageReceived,
     chatMessagesReceived,
@@ -7,9 +7,8 @@ import {
 export let socket;
 
 export const initSocket = (store) => {
-    if (!socket) {
+    if (socket) {
         socket = io.connect();
-
         socket.on("chatMessages", (data) => {
             console.log("chatMessages in socket", data);
 

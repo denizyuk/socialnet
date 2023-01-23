@@ -175,39 +175,43 @@ module.exports.getHowManyFriends = (userId) => {
     return db.query(sql, [userId]);
 };
 
-module.exports.getLastMessages = (limit = 10) => {
-    const sql = `
-        SELECT messages.id, first_name, last_name, CONCAT (first_name, ' ', last_name) AS full_name, profile_pic, user_id, message,
-        TO_CHAR(messages.created_at, 'DD/MM/YYYY, HH24:MI:SS') AS create_at
-        FROM users
-        JOIN messages
-        ON messages.user_id = users.id
-        ORDER BY messages.created_at DESC
-        LIMIT $1;
-        `;
-    return db.query(sql, [limit]);
+module.exports.addMessage = (senderId, message) => {
+    return db
+        .query(
+            `INSERT INTO messages (sender_id, message) VALUES ($1, $2) RETURNING *;`,
+            [senderId, message]
+        )
+        .then((data) => data.rows[0])
+        .catch((err) => console.log(console.log("Messages query error:", err)));
 };
 
-function getLastMessageById(messageId) {
-    const sql = `
-        SELECT messages.id, first_name, last_name, CONCAT (first_name, ' ', last_name) AS full_name, profile_pic, user_id, message,
-        TO_CHAR(messages.created_at, 'DD/MM/YYYY, HH24:MI:SS') AS create_at
-        FROM users
-        JOIN messages
-        ON messages.user_id = users.id
-        WHERE messages.id = $1;
-        `;
-    return db.query(sql, [messageId]);
-}
+module.exports.getMessageUserData = (id) => {
+    return db
+        .query(
+            `SELECT messages.id, m.sender_id, m.message, m.created_at,
+                    u.first_name, u.last_name, u.profile_pic
+            FROM messages m
+            JOIN users u ON m.sender_id = u.id
+            WHERE m.id=$1;`,
+            [id]
+        )
+        .then((data) => data.rows[0])
+        .catch((err) => console.log(console.log("Messages query error:", err)));
+};
 
-module.exports.insertMessage = (userId, message) => {
-    const sql = `
-        INSERT INTO messages (user_id, message)
-        VALUES ($1, $2)
-        RETURNING *;
-        `;
-    return db.query(sql, [userId, message]).then((result) => {
-        const messageId = result.rows[0].id;
-        return getLastMessageById(messageId).then((data) => data.rows[0]);
-    });
+module.exports.getLatestMessages = (limit = 10) => {
+    return db
+        .query(
+            `SELECT * FROM (
+            SELECT m.id,  m.message, m.created_at,
+                   u.first_name, u.last_name, u.profile_pic
+            FROM messages m
+            JOIN users u ON m.sender_id = u.id
+            ORDER BY m.created_at DESC
+            LIMIT $1
+        ) as results ORDER BY created_at DESC;`,
+            [limit]
+        )
+        .then((data) => data.rows)
+        .catch((err) => console.log(console.log("Messages query error:", err)));
 };

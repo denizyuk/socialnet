@@ -4,6 +4,7 @@ const compression = require("compression");
 const path = require("path");
 const db = require("./db.js");
 const aws = require("aws-sdk");
+const cors = require("cors");
 const { AWS_KEY, AWS_SECRET, AWS_BUCKET } = process.env;
 const s3 = new aws.S3({
     accessKeyId: AWS_KEY,
@@ -26,11 +27,20 @@ app.use(express.static(path.join(__dirname, "..", "client", "public")));
 app.use(express.json());
 
 const io = require("socket.io")(server, {
-    allowRequest: (req, callback) =>
-        callback(null, req.headers.referer.startsWith("http://localhost:3000")),
+    cors: {
+        origin: "http://localhost:3000",
+    },
+    /*allowRequest: (req, callback) =>
+        callback(null, req.headers.referer.startsWith("http://localhost:3000")),*/
 });
-
+// console.log(
+//     io.on("connection", (socket) => {
+//         console.log("test");
+//     })
+// );
 io.on("connection", async (socket) => {
+    socket.emit("test", "my server is speaking to me");
+    console.log(socket, "socket on connection");
     console.log("[social:socket] incoming socket connection", socket.id);
 
     const { userId } = socket.request.session;
@@ -38,12 +48,13 @@ io.on("connection", async (socket) => {
         return socket.disconnect(true);
     }
 
-    const latestMessages = await db.getLastMessages();
+    const latestMessages = await db.getLatestMessages();
 
     socket.emit("chatMessages", latestMessages.rows);
 
     socket.on("chatMessage", async (text) => {
-        const newMessage = await db.insertMessage(userId, text);
+        console.log("I got to chatMessage socket");
+        const newMessage = await db.addMessage(userId, text);
         console.log("messages in server", newMessage);
 
         io.emit("chatMessage", newMessage);
@@ -52,15 +63,27 @@ io.on("connection", async (socket) => {
 
 // ---------- COOKIES ----------
 
-app.use(
-    cookieSession({
-        secret: process.env.SESSION_SECRET,
-        maxAge: 1000 * 60 * 60 * 24 * 14,
-    })
-);
+// app.use(
+//     cookieSession({
+//         secret: process.env.SESSION_SECRET,
+//         maxAge: 1000 * 60 * 60 * 24 * 14,
+//     }),
+//     cors({ origin: "http://localhost:3000" })
+// );
+
+const cookieSessionMiddleware = cookieSession({
+    secret: process.env.SESSION_SECRET,
+    maxAge: 1000 * 60 * 60 * 24 * 90,
+});
+app.use(cookieSessionMiddleware, cors({ origin: "http://localhost:3000" }));
+io.use(function (socket, next) {
+    cookieSessionMiddleware(socket.request, socket.request.res, next);
+});
 
 //   DOUBLE CHECK NAMES !!!!!!
+/*
 app.use((req, res, next) => {
+    
     console.log("---------------------");
     console.log("req.url:", req.url);
     console.log("req.method:", req.method);
@@ -69,7 +92,7 @@ app.use((req, res, next) => {
     console.log("---------------------");
     next();
 });
-
+*/
 app.get("/user/id", checkId, function (req, res) {
     res.json({
         userId: req.session.userId,
@@ -375,31 +398,51 @@ app.get("/friendship", checkId, (req, res) => {
 });
 
 app.get("/messages", (req, res) => {
+    console.log("GET /messages request received");
     const limit = req.query.limit || 10;
     db.getLastMessages(limit)
-        .then((data) => res.json(data.rows))
-        .catch((error) => res.json(error));
+        .then((data) => {
+            console.log("GET /messages success", data);
+            res.json(data.rows);
+        })
+        .catch((error) => {
+            console.error("GET /messages error", error);
+            res.json(error);
+        });
 });
 
 app.get("/messages/:id", (req, res) => {
+    console.log("GET /messages/:id request received with id:", req.params.id);
     const messageId = req.params.id;
     db.getLastMessageById(messageId)
-        .then((data) => res.json(data.rows[0]))
-        .catch((error) => res.json(error));
+        .then((data) => {
+            console.log("GET /messages/:id success", data);
+            res.json(data.rows[0]);
+        })
+        .catch((error) => {
+            console.error("GET /messages/:id error", error);
+            res.json(error);
+        });
 });
 
 app.post("/messages", (req, res) => {
+    console.log("POST /messages request received with body:", req.body);
     const userId = req.body.userId;
     const message = req.body.message;
     db.insertMessage(userId, message)
-        .then((data) => res.json(data))
-        .catch((error) => res.json(error));
+        .then((data) => {
+            console.log("POST /messages success", data);
+            res.json(data);
+        })
+        .catch((error) => {
+            console.error("POST /messages error", error);
+            res.json(error);
+        });
 });
-
 app.get("*", function (req, res) {
     res.sendFile(path.join(__dirname, "..", "client", "index.html"));
 });
 
-app.listen(PORT, function () {
+server.listen(PORT, function () {
     console.log(`Express server listening on port ${PORT}`);
 });

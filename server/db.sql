@@ -28,10 +28,10 @@ CREATE TABLE passwordCodes (
 );
 
 
---Add to the database-- 
+
 CREATE TABLE messages (
     id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id) NOT NULL,
+    sender_id INT REFERENCES users(id) NOT NULL,
     message TEXT NOT NULL CHECK (message != ''),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

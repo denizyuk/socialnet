@@ -63,13 +63,13 @@
 //     );
 // }
 
-import { useSelector } from "react-redux";
+//import { useSelector } from "react-redux";
 import { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 
 export default function Chat() {
-    const messages = useSelector((state) => state.messages);
-    const [message, setMessage] = useState("");
+    //    const messages = useSelector((state) => state.messages);
+    const [message, setMessage] = useState([]);
     const socketRef = useRef(null);
 
     useEffect(() => {
@@ -79,26 +79,35 @@ export default function Chat() {
         };
     }, []);
 
-    const onChatKeyDown = (e) => {
-        if (e.code === "Enter") {
-            e.preventDefault();
-            socketRef.current.emit("chatMessage", message.trim());
-            setMessage("");
+    useEffect(() => {
+        function broadcastMessage(newMessage) {
+            setMessage((allMessage) => {
+                console.log("allMessage, newMessage", allMessage, newMessage);
+                return [...allMessage, newMessage];
+            });
         }
+        function newMessages(incomingMessage) {
+            console.log("incomingMessage", incomingMessage);
+            setMessage(incomingMessage);
+        }
+        socketRef.current.on("broadcastMessage", broadcastMessage);
+        socketRef.current.on("chatMessages", newMessages);
+    }, []);
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        let val = e.target.message.value;
+        socketRef.current.emit("sendMessage", val);
+        e.target.message.value = "";
     };
 
-    const onMessageChange = (e) => {
-        setMessage(e.target.value);
-    };
-
-    const x = messages;
-    console.log("messages in x", x);
+    console.log("messages in x", message);
 
     return (
         <div className="chat-big-cont">
             <div className="chats-cont">
                 <ul>
-                    {x?.map((message) => (
+                    {message.map((message) => (
                         <li key={message.id}>
                             <div className="chat-user">
                                 <img
@@ -124,13 +133,13 @@ export default function Chat() {
                 </ul>
             </div>
             <div className="new-message">
-                <textarea
-                    name="message"
-                    placeholder="Your message here"
-                    onKeyDown={(e) => onChatKeyDown(e)}
-                    onChange={(e) => onMessageChange(e)}
-                    value={message}
-                ></textarea>
+                <form onSubmit={onSubmit}>
+                    <textarea
+                        name="message"
+                        placeholder="Your message here"
+                    ></textarea>
+                    <button>SEND</button>
+                </form>
             </div>
         </div>
     );

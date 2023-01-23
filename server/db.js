@@ -54,35 +54,35 @@ module.exports.findUserByEmail = function (email) {
     return db.query(sql, [email]);
 };
 
-// module.exports.insertPasswordCode = function (email, passwordCode) {
-//     const sql = `
-//         INSERT INTO passwordCodes (email, passwordCode)
-//         VALUES ($1, $2)
-//         RETURNING *;
-//     `;
-//     return db.query(sql, [email, passwordCode]);
-// };
+module.exports.insertPasswordCode = function (email, passwordCode) {
+    const sql = `
+        INSERT INTO passwordCodes (email, passwordCode)
+        VALUES ($1, $2)
+        RETURNING *;
+    `;
+    return db.query(sql, [email, passwordCode]);
+};
 
-// module.exports.findPasswordCode = function (email) {
-//     const sql = `
-//         SELECT passwordCode FROM passwordCodes
-//         WHERE email = $1
-//         AND CURRENT_TIMESTAMP - created_at < INTERVAL '20 minutes'
-//         ORDER BY created_at DESC
-//         LIMIT 1;
-//     `;
-//     return db.query(sql, [email]);
-// };
+module.exports.findPasswordCode = function (email) {
+    const sql = `
+        SELECT passwordCode FROM passwordCodes
+        WHERE email = $1
+        AND CURRENT_TIMESTAMP - created_at < INTERVAL '20 minutes'
+        ORDER BY created_at DESC
+        LIMIT 1;
+    `;
+    return db.query(sql, [email]);
+};
 
-// module.exports.insertNewPassword = function (email, password) {
-//     const sql = `
-//         UPDATE users SET password = $2
-//         WHERE email = $1;
-//     `;
-//     return this.hash(password).then((hpassword) => {
-//         return db.query(sql, [email, hpassword]);
-//     });
-// };
+module.exports.insertNewPassword = function (email, password) {
+    const sql = `
+        UPDATE users SET password = $2
+        WHERE email = $1;
+    `;
+    return this.hash(password).then((hpassword) => {
+        return db.query(sql, [email, hpassword]);
+    });
+};
 
 module.exports.insertProfilePic = function (profile_pic, userId) {
     const sql = `
@@ -106,7 +106,7 @@ module.exports.findUserById = function (userId) {
     const sql = `
     SELECT * FROM users WHERE id = $1;
     `;
-    return db.query(sql, [userId]);
+    return db.query(sql, [userId]).then((result) => result.rows[0]);
 };
 
 module.exports.findUsersByValue = function (name) {

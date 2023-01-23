@@ -13,6 +13,7 @@ const s3 = new aws.S3({
 require("dotenv").config();
 const fs = require("fs");
 const server = require("http").Server(app);
+const cryptoRandomString = require("crypto-random-string");
 
 const cookieSession = require("cookie-session");
 const { uploader, checkId } = require("./middleware.js");
@@ -48,16 +49,18 @@ io.on("connection", async (socket) => {
         return socket.disconnect(true);
     }
 
-    const latestMessages = await db.getLatestMessages();
+    const newMessage = await db.getLatestMessages();
+    console.log("from server :", newMessage);
 
-    socket.emit("chatMessages", latestMessages.rows);
+    socket.emit("chatMessages", newMessage);
 
-    socket.on("chatMessage", async (text) => {
-        console.log("I got to chatMessage socket");
+    socket.on("sendMessage", async (text) => {
+        console.log("I got to sendMessage socket");
         const newMessage = await db.addMessage(userId, text);
         console.log("messages in server", newMessage);
-
-        io.emit("chatMessage", newMessage);
+        const user = await db.findUserById(userId);
+        console.log("user", user);
+        io.emit("broadcastMessage", { ...newMessage, ...user });
     });
 });
 
@@ -167,51 +170,50 @@ app.get("/logout", (req, res) => {
     res.json({ success: true });
 });
 
-//app.post("/forgetPassword", (req, res) => {
-//    const email = req.body.email;
-//
-//    db.checkEmail(email).then((result) => {
-//        // console.log("email log", result[0]);
-//        if (!result.length) {
-//            res.json({ message: "email not found" });
-//        } else {
-//            const secretCode = cryptoRandomString({
-//                length: 6,
-//            });
-//            console.log("password code is: ", secretCode);
-//
-//            db.insertPasswordCode(email, secretCode).then(() => {
-//                if (req.body) {
-//                    res.json({
-//                        success: true,
-//                        passCode: secretCode,
-//                    });
-//                } else {
-//                    res.json({
-//                        success: false,
-//                        message: "something went wrong!",
-//                    });
-//                }
-//            });
-//        }
-//    });
-//});
+app.post("/forgetPassword", (req, res) => {
+    const email = req.body.email;
 
-// app.post("/resetPassword", (req, res) => {
-//     const { email, passwordCode, newPassword } = req.body;
+    db.checkEmail(email).then((result) => {
+        if (!result.length) {
+            res.json({ message: "email not found" });
+        } else {
+            const secretCode = cryptoRandomString({
+                length: 6,
+            });
+            console.log("password code is: ", secretCode);
 
-//     db.findPasswordCode(email).then((data) => {
-//         if (data.rows[0].passwordcode === passwordCode) {
-//             db.insertNewPassword(email, newPassword).then(() => {
-//                 res.json({
-//                     success: true,
-//                 });
-//             });
-//         } else {
-//             res.json({ success: false, message: "wrong code!" });
-//         }
-//     });
-// });
+            db.insertPasswordCode(email, secretCode).then(() => {
+                if (req.body) {
+                    res.json({
+                        success: true,
+                        passCode: secretCode,
+                    });
+                } else {
+                    res.json({
+                        success: false,
+                        message: "something went wrong!",
+                    });
+                }
+            });
+        }
+    });
+});
+
+app.post("/resetPassword", (req, res) => {
+    const { email, passwordCode, newPassword } = req.body;
+
+    db.findPasswordCode(email).then((data) => {
+        if (data.rows[0].passwordcode === passwordCode) {
+            db.insertNewPassword(email, newPassword).then(() => {
+                res.json({
+                    success: true,
+                });
+            });
+        } else {
+            res.json({ success: false, message: "wrong code!" });
+        }
+    });
+});
 
 app.post("/profilePic", checkId, uploader.single("file"), (req, res) => {
     if (req.file) {
@@ -274,7 +276,7 @@ app.get("/user", checkId, (req, res) => {
         console.log("userID", userId);
         db.findUserById(userId)
             .then((data) => {
-                res.json(data.rows[0]);
+                res.json(data);
             })
             .catch((err) => {
                 console.log("error in findUserById ", err);

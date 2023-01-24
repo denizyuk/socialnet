@@ -111,7 +111,7 @@ export default class Login extends Component {
                     </button>
                 </div>
                 <div className="forget-btn">
-                    <Link to="/forgetPassword">forget password?</Link>
+                    <Link to="/test">forget password?</Link>
                 </div>
                 <div>
                     <Link to="/">

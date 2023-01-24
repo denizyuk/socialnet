@@ -5,10 +5,11 @@ const path = require("path");
 const db = require("./db.js");
 const aws = require("aws-sdk");
 const cors = require("cors");
-const { AWS_KEY, AWS_SECRET, AWS_BUCKET } = process.env;
-const s3 = new aws.S3({
+const { AWS_KEY, AWS_SECRET, AWS_BUCKET, AWS_REGION } = process.env;
+const s3 = new aws.SES({
     accessKeyId: AWS_KEY,
     secretAccessKey: AWS_SECRET,
+    region: AWS_REGION,
 });
 require("dotenv").config();
 const fs = require("fs");
@@ -174,6 +175,7 @@ app.post("/forgetPassword", (req, res) => {
     const email = req.body.email;
 
     db.checkEmail(email).then((result) => {
+        console.log("email log", result[0]);
         if (!result.length) {
             res.json({ message: "email not found" });
         } else {
@@ -201,8 +203,11 @@ app.post("/forgetPassword", (req, res) => {
 
 app.post("/resetPassword", (req, res) => {
     const { email, passwordCode, newPassword } = req.body;
+    console.log("body", req.body);
 
     db.findPasswordCode(email).then((data) => {
+        console.log("database code: ", data.rows[0].passwordcode);
+        console.log("input code: ", passwordCode);
         if (data.rows[0].passwordcode === passwordCode) {
             db.insertNewPassword(email, newPassword).then(() => {
                 res.json({

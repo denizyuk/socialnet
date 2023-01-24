@@ -1,8 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Register from "./Registration.jsx";
 import Login from "./Login";
-//import { BrowserRouter } from "react-router-dom";
-
 import ForgetPassword from "./ForgetPassword";
 
 // styling later
@@ -17,13 +15,12 @@ export default function Welcome() {
             <div className="forms-sml-cont">
                 <BrowserRouter>
                     <Routes>
-                        <Route path="/" element={<Register />}></Route>
-                        <Route path="/login" element={<Login />}></Route>
-
                         <Route
-                            path="/forgetPasword"
+                            path="/test"
                             element={<ForgetPassword />}
                         ></Route>
+                        <Route exact path="/" element={<Register />}></Route>
+                        <Route path="/login" element={<Login />}></Route>
                     </Routes>
                 </BrowserRouter>
             </div>

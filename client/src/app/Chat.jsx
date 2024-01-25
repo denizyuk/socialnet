@@ -59,7 +59,7 @@
 //                     value={message}
 //                 ></textarea>
 //             </div>
-//         </div>
+//         </div> //
 //     );
 // }
 

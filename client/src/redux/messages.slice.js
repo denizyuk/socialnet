@@ -18,7 +18,7 @@ export default function messagesReducer(messages = [], action) {
             return messages;
     }
 }
-
+//
 export function chatMessagesReceived(messages) {
     return {
         type: CHAT_MESSAGES_RECEIVED,

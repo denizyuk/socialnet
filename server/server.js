@@ -35,6 +35,7 @@ const io = require("socket.io")(server, {
     /*allowRequest: (req, callback) =>
         callback(null, req.headers.referer.startsWith("http://localhost:3000")),*/
 });
+//
 // console.log(
 //     io.on("connection", (socket) => {
 //         console.log("test");

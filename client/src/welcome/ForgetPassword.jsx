@@ -9,7 +9,7 @@ const defaultState = {
     newPassword: "",
     step: 1,
 };
-
+//
 export default class ForgetPassword extends Component {
     constructor() {
         super();

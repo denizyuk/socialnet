@@ -3,7 +3,7 @@ import Register from "./Registration.jsx";
 import Login from "./Login";
 import ForgetPassword from "./ForgetPassword";
 
-// styling later
+// styling later//
 import "../../../client/style.css";
 
 export default function Welcome() {

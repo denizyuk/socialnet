@@ -1,4 +1,4 @@
-import ProfilePic from "./ProfilePic.jsx";
+import ProfilePic from "./ProfilePic.jsx"; //
 import BioEditor from "./BioEditor.jsx";
 
 import "../../../client/style.css";

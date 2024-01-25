@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"; //
 import FriendButton from "./FriendButton.jsx";
 import { Link } from "react-router-dom";
 

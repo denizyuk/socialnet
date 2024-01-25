@@ -20,7 +20,7 @@ export default function Uploader({ setProfilePic }) {
                 }
             });
     };
-
+//
     return (
         <div className="profilePicUploader-bigcont">
             <form

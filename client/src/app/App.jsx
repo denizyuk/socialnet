@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Link } from "react-router-dom"; //
 
 import "../../../client/style.css";
 

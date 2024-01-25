@@ -35,3 +35,4 @@ CREATE TABLE messages (
     message TEXT NOT NULL CHECK (message != ''),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+/*

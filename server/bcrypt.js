@@ -7,3 +7,5 @@ exports.hash = (password) => {
 };
 
 exports.compare = bcrypt.compare;
+
+// add

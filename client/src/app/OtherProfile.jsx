@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useParams } from "react-router"; //
 import { useEffect, useState } from "react";
 
 import FriendButton from "./FriendButton.jsx";
